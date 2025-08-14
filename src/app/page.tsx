@@ -2,20 +2,23 @@
 
 import React, { useEffect, useState } from "react";
 import { Advocate } from "../db/schema";
+import useDebounce from "./hooks/useDebounce";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  // implementing a debounce to avoid too many requests 
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   useEffect(() => {
     console.log("fetching advocates...");
-    const url = `/api/advocates?search=${encodeURIComponent(searchTerm)}`;
+    const url = `/api/advocates?search=${encodeURIComponent(debouncedSearchTerm)}`;
     fetch(url).then((response) => {
       response.json().then((jsonResponse) => {
         setAdvocates(jsonResponse.data);
       });
     });
-  }, [searchTerm]);
+  }, [debouncedSearchTerm]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value ?? '');
