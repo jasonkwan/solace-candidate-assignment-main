@@ -16,4 +16,4 @@
 
 2. Consider implementing case insensitive search
 
-3. Didn't have time to enhance the styles. Instead of modifying the styles of each tag, consider adapting the material-ui components to replace all/most native html tags (eg. <table> => <Table> etc). They are proven and well tuned to provide consistent ui. Eventually, consider developing/adapting to some set of company-wide `Design System` components to unify ui/styles. 
+3. Didn't have time to enhance the styles. Instead of modifying the styles of each tag, consider adapting the material-ui components to replace all/most native html tags (eg. table -> Table, input -> TextField etc). They are proven and well tuned to provide consistent ui. Eventually, consider developing/adapting to some set of company-wide `Design System` components to unify ui/styles. 
