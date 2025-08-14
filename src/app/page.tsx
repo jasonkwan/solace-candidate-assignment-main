@@ -5,17 +5,17 @@ import { Advocate } from "../db/schema";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
-  // add searchTerm state to replace the filteredAdvocates state
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     console.log("fetching advocates...");
-    fetch("/api/advocates").then((response) => {
+    const url = `/api/advocates?search=${encodeURIComponent(searchTerm)}`;
+    fetch(url).then((response) => {
       response.json().then((jsonResponse) => {
         setAdvocates(jsonResponse.data);
       });
     });
-  }, []);
+  }, [searchTerm]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value ?? '');
@@ -26,22 +26,9 @@ export default function Home() {
     setSearchTerm('');
   };
 
-  console.log("filtering advocates...");
-  // filteredAdvocates is a derived state based on the search term and advocates states
-  const filteredAdvocates = searchTerm
-    ? advocates.filter((advocate) => (
-        advocate.firstName.includes(searchTerm) ||
-        advocate.lastName.includes(searchTerm) ||
-        advocate.city.includes(searchTerm) ||
-        advocate.degree.includes(searchTerm) ||
-        advocate.specialties.some(speciality => speciality.includes(searchTerm)) ||
-        String(advocate.yearsOfExperience).includes(searchTerm)
-      ))
-    : advocates;
-
   return (
     <main style={{ margin: "24px" }}>
-      <h1>Solace Advocates 5</h1>
+      <h1>Solace Advocates</h1>
       <br />
       <br />
       <div>
@@ -49,7 +36,7 @@ export default function Home() {
         <p>
           Searching for: <span>{searchTerm}</span>
         </p>
-        <input style={{ border: "1px solid black" }} onChange={onChange} />
+        <input style={{ border: "1px solid black" }} onChange={onChange} value={searchTerm} />
         <button onClick={onClick}>Reset Search</button>
       </div>
       <br />
@@ -65,7 +52,7 @@ export default function Home() {
           <th>Phone Number</th>
         </thead>
         <tbody>
-          {filteredAdvocates.map((advocate, index) => {
+          {advocates.map((advocate, index) => {
             return (
               <tr key={index}>
                 <td>{advocate.firstName}</td>
