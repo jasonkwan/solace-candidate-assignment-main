@@ -5,55 +5,49 @@ import { Advocate } from "../db/schema";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
-  const [filteredAdvocates, setFilteredAdvocates] = useState<Advocate[]>([]);
+  // add searchTerm state to replace the filteredAdvocates state
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     console.log("fetching advocates...");
     fetch("/api/advocates").then((response) => {
       response.json().then((jsonResponse) => {
         setAdvocates(jsonResponse.data);
-        setFilteredAdvocates(jsonResponse.data);
       });
     });
   }, []);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchTerm = e.target.value;
+    setSearchTerm(e.target.value ?? '');
+  };
 
-    const searchTextElement = document.getElementById("search-term");
-    if (searchTextElement) {
-      searchTextElement.innerHTML = searchTerm;
-    }
+  const onClick = () => {
+    console.log(advocates);
+    setSearchTerm('');
+  };
 
-    console.log("filtering advocates...");
-    const filteredAdvocates = advocates.filter((advocate) => {
-      return (
+  console.log("filtering advocates...");
+  // filteredAdvocates is a derived state based on the search term and advocates states
+  const filteredAdvocates = searchTerm
+    ? advocates.filter((advocate) => (
         advocate.firstName.includes(searchTerm) ||
         advocate.lastName.includes(searchTerm) ||
         advocate.city.includes(searchTerm) ||
         advocate.degree.includes(searchTerm) ||
         advocate.specialties.some(speciality => speciality.includes(searchTerm)) ||
         String(advocate.yearsOfExperience).includes(searchTerm)
-      );
-    });
-
-    setFilteredAdvocates(filteredAdvocates);
-  };
-
-  const onClick = () => {
-    console.log(advocates);
-    setFilteredAdvocates(advocates);
-  };
+      ))
+    : advocates;
 
   return (
     <main style={{ margin: "24px" }}>
-      <h1>Solace Advocates</h1>
+      <h1>Solace Advocates 5</h1>
       <br />
       <br />
       <div>
         <p>Search</p>
         <p>
-          Searching for: <span id="search-term"></span>
+          Searching for: <span>{searchTerm}</span>
         </p>
         <input style={{ border: "1px solid black" }} onChange={onChange} />
         <button onClick={onClick}>Reset Search</button>
